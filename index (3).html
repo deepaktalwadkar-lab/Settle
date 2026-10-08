@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Settled – invoices for freelancers</title>
+<meta name="theme-color" content="#1F6F5C">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F0F2F5;--card:#fff;--ink:#111B21;--mute:#667781;--line:#E3E6EA;--accent:#1F6F5C;--on:#fff;--stamp:#C23B3B;--paper:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B141A;--card:#1F2C34;--ink:#E9EDEF;--mute:#8696A0;--line:#2A3942;--accent:#2FB38C;--on:#06201A;--paper:#F8F9FB}}
+:root[data-theme="dark"]{--bg:#0B141A;--card:#1F2C34;--ink:#E9EDEF;--mute:#8696A0;--line:#2A3942;--accent:#2FB38C;--on:#06201A;--paper:#F8F9FB}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Inter,system-ui,sans-serif;padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;display:flex;align-items:center;gap:10px}
+.logo{width:36px;height:36px;border-radius:11px;background:var(--accent);color:var(--on);display:grid;place-items:center;font-weight:700;font-size:18px}
+header b{font-size:18px;display:block;line-height:1.1}header small{color:var(--mute);font-size:12px}
+.tab{display:none;max-width:560px;margin:0 auto;padding:14px}.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.card h2{font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--mute);margin:0 0 4px}
+label{display:block;font-size:12px;color:var(--mute);margin:10px 0 4px}
+input,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item{border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:8px}
+.item .h{display:grid;grid-template-columns:1fr 42px;gap:8px}
+.item .row{margin-top:8px}
+.btn{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:13px;font:600 15px Inter,sans-serif;cursor:pointer;margin-top:8px}
+.btn.p{background:var(--accent);color:var(--on);border-color:var(--accent)}
+.btn.s{width:auto;margin:0;padding:10px 18px;border-radius:22px}
+.aside{background:var(--bg);border-left:4px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:12px;font-size:14px}
+.aside b{display:block;font-size:22px}
+.sum{position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom,0px));z-index:4;background:var(--card);border-top:1px solid var(--line);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sum small{color:var(--mute);font-size:12px;display:block}.sum b{font-size:18px}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{background:none;border:0;color:var(--mute);font:600 11px Inter,sans-serif;padding:9px 0 8px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+nav svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+nav button[aria-current="true"]{color:var(--accent)}
+#wrap{overflow-x:auto;border-radius:10px}
+#sheet{background:var(--paper);color:#14213D;padding:22px;min-width:340px;position:relative;box-shadow:0 2px 14px rgba(0,0,0,.12)}
+#sheet h3{font:700 26px Inter,sans-serif;margin:0 0 4px;letter-spacing:-.5px}
+#sheet .meta{display:flex;justify-content:space-between;gap:14px;margin:14px 0;font-size:13px;flex-wrap:wrap}
+#sheet table{width:100%;border-collapse:collapse;font-size:13px}
+#sheet th{text-align:left;border-bottom:2px solid #14213D;padding:6px 0}
+#sheet td{padding:7px 0;border-bottom:1px solid #D5DAE1}
+#sheet .r{text-align:right}
+#sheet .tot{margin-left:auto;width:220px;margin-top:12px;font-size:13px}
+#sheet .tot div{display:flex;justify-content:space-between;padding:3px 0}
+#sheet .tot .g{font-weight:700;font-size:17px;border-top:2px solid #14213D;margin-top:4px;padding-top:7px}
+#stamp{position:absolute;top:20px;right:20px;border:4px solid var(--stamp);color:var(--stamp);font:700 24px Inter,sans-serif;padding:0 12px;transform:rotate(-8deg);border-radius:6px;display:none}
+#sheet.paid #stamp{display:block}
+#mark{margin:22px 0 0;font-size:11px;color:#7A8497;text-align:center}
+.pre{white-space:pre-line;font-size:13px}
+#toast{position:fixed;left:50%;bottom:calc(140px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#111B21;color:#fff;padding:10px 16px;border-radius:20px;font-size:13px;z-index:9;display:none;max-width:90%}
+a{color:var(--accent);font-weight:600}
+</style>
+</head>
+<body>
+<header><div class="logo">S</div><div><b>Settled</b><small>Invoices &amp; tax set-aside</small></div></header>
+<main>
+<section class="tab on" id="t0" aria-label="Create invoice">
+  <div class="card"><h2>You</h2>
+    <label for="from">Name or business</label><input id="from" value="Your Name" autocomplete="name">
+    <label for="fromAddr">Contact (email, address)</label><input id="fromAddr" value="you@email.com"></div>
+  <div class="card"><h2>Client &amp; dates</h2>
+    <label for="to">Client name</label><input id="to" value="Client Co.">
+    <div class="row"><div><label for="num">Invoice no.</label><input id="num"></div>
+    <div><label for="cur">Currency</label><select id="cur"><option>$</option><option>€</option><option>£</option><option>₹</option><option>A$</option><option>C$</option></select></div></div>
+    <div class="row"><div><label for="date">Issued</label><input id="date" type="date"></div>
+    <div><label for="due">Due</label><input id="due" type="date"></div></div></div>
+  <div class="card"><h2>Work</h2><div id="items"></div>
+    <button class="btn" id="add" type="button">+ Add line</button></div>
+  <div class="card"><h2>Tax</h2>
+    <div class="row"><div><label for="tax">Sales tax / GST (%)</label><input id="tax" type="number" inputmode="decimal" min="0" value="0"></div>
+    <div><label for="aside">Income tax set aside (%)</label><input id="aside" type="number" inputmode="decimal" min="0" value="25"></div></div>
+    <label for="note">Payment note</label><input id="note" value="Please pay by bank transfer within 14 days.">
+    <div class="aside" aria-live="polite">Set this aside for income tax<b id="asideAmt"></b><span id="keepAmt"></span></div></div>
+</section>
+<section class="tab" id="t1" aria-label="Invoice preview">
+  <div id="wrap"><div id="sheet">
+    <div id="stamp">PAID</div>
+    <h3>Invoice <span id="vNum"></span></h3>
+    <div class="meta">
+      <div><b id="vFrom"></b><br><span id="vFromAddr"></span></div>
+      <div>Billed to<br><b id="vTo"></b></div>
+      <div>Issued <span id="vDate"></span><br>Due <span id="vDue"></span></div></div>
+    <table><thead><tr><th>Description</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr></thead><tbody id="vRows"></tbody></table>
+    <div class="tot"><div><span>Subtotal</span><span id="vSub"></span></div><div><span>Tax</span><span id="vTax"></span></div><div class="g"><span>Total due</span><span id="vTot"></span></div></div>
+    <p id="vNote" class="pre"></p><p id="mark">Made with Settled</p>
+  </div></div>
+  <button class="btn p" id="share" type="button">Share PDF (WhatsApp, email…)</button>
+  <button class="btn" id="dl" type="button">Download PDF</button>
+  <button class="btn" id="paid" type="button">Mark as paid</button>
+  <button class="btn" id="next" type="button">New invoice</button>
+</section>
+<section class="tab" id="t2" aria-label="Settled Pro">
+  <div class="card"><h2>Settled Pro</h2>
+    <p>Removes the “Made with Settled” footer from your invoices and PDFs.</p>
+    <p><a id="buy" href="#" rel="noopener">Get Pro</a></p>
+    <label for="code">Unlock code</label><input id="code" placeholder="Enter unlock code">
+    <p id="proMsg"></p></div>
+</section>
+</main>
+<div class="sum" id="sum"><div><small>Total due</small><b id="sTot"></b></div><button class="btn p s" id="view" type="button">View invoice</button></div>
+<nav aria-label="Main">
+  <button type="button" data-t="0" aria-current="true"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>Create</button>
+  <button type="button" data-t="1"><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9zM14 3v6h6"/></svg>Invoice</button>
+  <button type="button" data-t="2"><svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>Pro</button>
+</nav>
+<div id="toast" role="status"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var KEY='settled.v2',st={n:1,pro:false,f:{}};
+try{var s=localStorage.getItem(KEY);if(s)st=Object.assign(st,JSON.parse(s))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+// Replace with your real payment link (Stripe Payment Link, Gumroad, Lemon Squeezy)
+var PAY_LINK='https://example.com/replace-with-your-payment-link';
+// Replace with codes you issue after each sale
+var CODES=['SETTLED-PRO-LAUNCH'];
+var F=['from','fromAddr','to','cur','tax','aside','note'];
+F.forEach(function(k){if(st.f&&st.f[k]!==undefined)$(k).value=st.f[k]});
+var items=[{d:'Website design',q:1,r:1200},{d:'Revisions',q:3,r:80}],isPaid=false;
+function today(o){var d=new Date();d.setDate(d.getDate()+o);return d.toISOString().slice(0,10)}
+$('date').value=today(0);$('due').value=today(14);$('buy').href=PAY_LINK;
+function num(){$('num').value='INV-'+String(st.n).padStart(3,'0')}num();
+function fmt(v){return v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function money(v){return $('cur').value+fmt(v)}
+function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}
+function toast(m){var t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(function(){t.style.display='none'},2600)}
+function calc(){var sub=0;items.forEach(function(it){sub+=(+it.q||0)*(+it.r||0)});var tax=sub*(+$('tax').value||0)/100;return{sub:sub,tax:tax,tot:sub+tax,aside:sub*(+$('aside').value||0)/100}}
+function drawItems(){
+  var h='';items.forEach(function(it,i){h+='<div class="item"><div class="h"><input data-i="'+i+'" data-k="d" value="'+esc(it.d).replace(/"/g,'&quot;')+'" placeholder="Description" aria-label="Description"><button class="btn" style="margin:0;padding:0" type="button" data-x="'+i+'" aria-label="Remove line">×</button></div><div class="row"><input data-i="'+i+'" data-k="q" type="number" inputmode="decimal" min="0" value="'+it.q+'" aria-label="Quantity" placeholder="Qty"><input data-i="'+i+'" data-k="r" type="number" inputmode="decimal" min="0" value="'+it.r+'" aria-label="Rate" placeholder="Rate"></div></div>'});
+  $('items').innerHTML=h;
+}
+function render(){
+  var c=calc(),rows='';
+  items.forEach(function(it){var a=(+it.q||0)*(+it.r||0);rows+='<tr><td>'+esc(it.d)+'</td><td class="r">'+(+it.q||0)+'</td><td class="r">'+money(+it.r||0)+'</td><td class="r">'+money(a)+'</td></tr>'});
+  $('vRows').innerHTML=rows;$('vSub').textContent=money(c.sub);$('vTax').textContent=money(c.tax);$('vTot').textContent=money(c.tot);$('sTot').textContent=money(c.tot);
+  $('vNum').textContent=$('num').value;$('vFrom').textContent=$('from').value;$('vFromAddr').textContent=$('fromAddr').value;
+  $('vTo').textContent=$('to').value;$('vDate').textContent=$('date').value;$('vDue').textContent=$('due').value;$('vNote').textContent=$('note').value;
+  $('asideAmt').textContent=money(c.aside);$('keepAmt').textContent='You keep about '+money(c.sub-c.aside)+' of this job.';
+  $('mark').style.display=st.pro?'none':'block';
+  $('proMsg').textContent=st.pro?'Pro unlocked ✓':'';
+  $('sheet').classList.toggle('paid',isPaid);$('paid').textContent=isPaid?'Mark as unpaid':'Mark as paid';
+}
+function show(n){
+  for(var i=0;i<3;i++){$('t'+i).classList.toggle('on',i==n)}
+  document.querySelectorAll('nav button').forEach(function(b){b.setAttribute('aria-current',b.dataset.t==n)});
+  $('sum').style.display=n==0?'flex':'none';window.scrollTo(0,0);
+}
+document.querySelectorAll('nav button').forEach(function(b){b.onclick=function(){show(+b.dataset.t)}});
+$('view').onclick=function(){show(1)};
+$('items').addEventListener('input',function(e){var t=e.target;if(t.dataset.k){items[t.dataset.i][t.dataset.k]=t.value;render()}});
+$('items').addEventListener('click',function(e){var x=e.target.dataset.x;if(x!==undefined){items.splice(+x,1);drawItems();render()}});
+$('add').onclick=function(){items.push({d:'',q:1,r:0});drawItems();render()};
+['from','fromAddr','to','num','cur','date','due','tax','aside','note'].forEach(function(i){$(i).addEventListener('input',function(){F.forEach(function(k){st.f[k]=$(k).value});save();render()})});
+$('paid').onclick=function(){isPaid=!isPaid;render()};
+$('next').onclick=function(){st.n++;save();num();isPaid=false;render();show(0);toast('New invoice ready')};
+$('code').addEventListener('input',function(){
+  var v=this.value.trim().toUpperCase();
+  if(CODES.indexOf(v)>-1){st.pro=true;save();render()}
+  else if(!st.pro)$('proMsg').textContent=v?'Code not recognised yet.':'';
+});
+// ---- Real PDF (works in installed Android app, no print dialog needed) ----
+var CS={'€':'EUR ','₹':'Rs. '};
+function build(){
+  var J=window.jspdf.jsPDF,d=new J({unit:'pt',format:'a4'}),m=48,R=547,y=64,c=calc(),cu=$('cur').value;
+  function pm(v){return (CS[cu]||cu)+fmt(v)}
+  d.setTextColor(20,33,61);d.setFont('helvetica','bold');d.setFontSize(26);d.text('Invoice '+$('num').value,m,y);
+  if(isPaid){d.setTextColor(194,59,59);d.setFontSize(26);d.text('PAID',R-70,y,{angle:6});d.setTextColor(20,33,61)}
+  y+=34;d.setFontSize(11);d.text($('from').value,m,y);d.text('Billed to',215,y);d.text('Dates',410,y);
+  d.setFont('helvetica','normal');d.setFontSize(10);
+  d.text(d.splitTextToSize($('fromAddr').value,150),m,y+14);d.text($('to').value,215,y+14);
+  d.text('Issued: '+$('date').value,410,y+14);d.text('Due: '+$('due').value,410,y+28);
+  y+=64;d.setFont('helvetica','bold');d.text('Description',m,y);d.text('Qty',340,y,{align:'right'});d.text('Rate',440,y,{align:'right'});d.text('Amount',R,y,{align:'right'});
+  d.setLineWidth(1.5);d.setDrawColor(20,33,61);d.line(m,y+6,R,y+6);y+=24;d.setFont('helvetica','normal');d.setDrawColor(213,218,225);d.setLineWidth(.5);
+  items.forEach(function(it){
+    var L=d.splitTextToSize(it.d||'-',250),a=(+it.q||0)*(+it.r||0);
+    if(y>740){d.addPage();y=64}
+    d.text(L,m,y);d.text(String(+it.q||0),340,y,{align:'right'});d.text(pm(+it.r||0),440,y,{align:'right'});d.text(pm(a),R,y,{align:'right'});
+    y+=L.length*13+6;d.line(m,y-8,R,y-8);y+=6;
+  });
+  if(y>680){d.addPage();y=64}
+  y+=6;d.text('Subtotal',360,y);d.text(pm(c.sub),R,y,{align:'right'});y+=18;d.text('Tax',360,y);d.text(pm(c.tax),R,y,{align:'right'});
+  y+=10;d.setDrawColor(20,33,61);d.setLineWidth(1.5);d.line(360,y,R,y);y+=20;d.setFont('helvetica','bold');d.setFontSize(14);d.text('Total due',360,y);d.text(pm(c.tot),R,y,{align:'right'});
+  y+=40;d.setFont('helvetica','normal');d.setFontSize(10);d.text(d.splitTextToSize($('note').value,R-m),m,y);
+  if(!st.pro){d.setFontSize(9);d.setTextColor(122,132,151);d.text('Made with Settled',297,810,{align:'center'})}
+  return d;
+}
+function make(){
+  if(!window.jspdf){toast('PDF tool not loaded. Check your internet once.');return null}
+  return{blob:build().output('blob'),name:($('num').value||'invoice')+'.pdf'};
+}
+function dl(o){var a=document.createElement('a');a.href=URL.createObjectURL(o.blob);a.download=o.name;document.body.appendChild(a);a.click();a.remove();toast('Saved '+o.name)}
+$('dl').onclick=function(){var o=make();if(o)dl(o)};
+$('share').onclick=function(){
+  var o=make();if(!o)return;
+  var f=new File([o.blob],o.name,{type:'application/pdf'});
+  if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:o.name}).catch(function(){});
+  else dl(o);
+};
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
+drawItems();render();show(0);
+})();
+</script>
+</body>
+</html>
